@@ -25,20 +25,18 @@ from oauth2client.service_account import ServiceAccountCredentials
 from arquitecturaApps import settings as stt
 
 def authenticate_google_docs():
-    urlJson=stt.BASE_DIR+"/dataOfTwitter/keys/utplApps-2e6b0704e6bf.json"
+    urlJson=stt.BASE_DIR+"/dataOfTwitter/keys/your-app-2e6b0704e6bf.json"
     f = open(urlJson, 'rb')
     SIGNED_KEY = f.read()
     f.close()
     scope = ['https://spreadsheets.google.com/feeds', 'https://docs.google.com/feeds']
     #scope = 'https://www.googleapis.com/auth/spreadsheets.readonly'
-    #credentials = ServiceAccountCredentials.from_p12_keyfile('dicksonarmijos@gmail.com', os.path.join('KEAproyect-a1fdc21d964c.p12'), scope)
-    #credentials = ServiceAccountCredentials.from_json_keyfile_name(os.path.join('KEAproyect-b4ff9f7e595f.json'), scope)
     credentials = ServiceAccountCredentials.from_json_keyfile_name(urlJson, scope)
 
     data = {
-        'refresh_token' : '1/YVTM7_qH7J4FvYqpqllLnP51vpXbBT2wbifbHhul2g2WIN1fEis-qn8PjfIMNpZ2',
-        'client_id' : '578335401812-hjaadped4a4peakui54npumc0jukpitj.apps.googleusercontent.com',
-        'client_secret' : 'GghbKvIsnXw_h4Mzbb4RZSZG',
+        'refresh_token' : 'your-token-hul2g2WIN1fEis-qn8PjfIMNpZ2',
+        'client_id' : 'your-client_id.apps.googleusercontent.com',
+        'client_secret' : 'Cliente-secret-h4Mzbb4RZSZG',
         'grant_type' : 'refresh_token',
     }
 
@@ -48,27 +46,12 @@ def authenticate_google_docs():
     gc = gspread.authorize(credentials)
     return gc
 
-CLIENT_ID = '578335401812-hjaadped4a4peakui54npumc0jukpitj.apps.googleusercontent.com'
-CLIENT_SECRET = 'GghbKvIsnXw_h4Mzbb4RZSZG'
+CLIENT_ID = '578335401812itj.apps.googleusercontent.com'
+CLIENT_SECRET = 'GghbKvIsnXw_h4M'
 
 
 flow = OAuth2WebServerFlow(client_id=CLIENT_ID,
                            client_secret=CLIENT_SECRET,
                            scope='https://spreadsheets.google.com/feeds https://docs.google.com/feeds',
                            redirect_uri='http://example.com/auth_return')
-print("permite:")
-# print(flow.step1_get_authorize_url())
-#
-# storage = Storage('creds.data')
-#
-# credentials = tools.run_flow(flow, storage)
-#
-# print("access_token: %s"%credentials.access_token)
-#
-# gc = authenticate_google_docs()
-#
-# sh = gc.open_by_url('https://docs.google.com/spreadsheets/d/11oq-zIk6KULgIv9_T73U7ghNkm3Z69oq4T_g-cS4y1s/edit#gid=0')
-# worksheet = sh.get_worksheet(0)
-# print(worksheet.col_values(1))
-#
 
