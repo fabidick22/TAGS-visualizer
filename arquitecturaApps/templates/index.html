@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% block moreCSS %}
+    <style>
+    .upload-drop-zone {
+      height: 200px;
+      border-width: 2px;
+      margin-bottom: 20px;
+    }
+
+    /* skin.css Style*/
+    .upload-drop-zone {
+      color: #ccc;
+      border-style: dashed;
+      border-color: #ccc;
+      line-height: 200px;
+      text-align: center
+    }
+    .upload-drop-zone.drop {
+      color: #222;
+      border-color: #222;
+    }
+    </style>
+    <link rel="stylesheet" href="{% static 'css/animeteIntro.css' %}">
+{% endblock %}
+{% block header %}
+    <div id="header-wrapper2" class="wrapper" style="padding: 4em 0 9em 0;">
+{#        <div id="header">#}
+{#            <!-- Logo -->#}
+{#            <div id="logo">#}
+{#                <h1><a href="indexOriginal.html">Escape Velocity</a></h1>#}
+{#                <p>A free responsive site template by HTML5 UP</p>#}
+{#            </div>#}
+{#            <div id="particles">#}
+{##}
+                <div class="intro">
+                    <br>
+                    <br>
+            <h1>PADT</h1>
+            <p>Proyecto de análisis de datos de twitter</p>
+          </div>
+{#        </div>#}
+{#        </div>#}
+    </div>
+{% endblock header %}
+
+{% block intro %}
+    <div id="intro-wrapper" class="wrapper style1">
+        <div class="title">Análisis</div>
+        <section id="intro" class="container">
+            <p class="style1"></p>
+            <p class="style2">
+                PADT trabaja conjuntamente con <br class="mobile-hide" />
+                <a href="https://tags.hawksey.info/" class="nobr">TAGS</a> es una plantilla de hoja de Google gratuita
+            </p>
+            <p class="style3">Para que <strong>PADT</strong> pueda trabajar necesita una hoja de google drive.
+                En el siguiente caja ingrese la URL de su archivo, <strong>PADT</strong> requerira de su permiso para poder
+                leer los datos de su archivo y proceder a realizar un análisis de los mismo.</p>
+                    <form method="POST" action="#">
+                    <div class="row 50%">
+                        <div class="12u">
+                            <!--input type="text" name="url" id="" placeholder="Url de documento de TAGS" /-->
+                            {% csrf_token %}
+                            {{ formUrl }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="12u">
+                            <ul class="actions">
+                                <li><button type="submit" class="button style1 big">Procesar</button></li>
+                            </ul>
+                        </div>
+                    </div>
+                </form>
+            <h4>--OR--</h4>
+            <div class="upload-drop-zone" id="drop-zone">
+            Arrastra y suenta tu archivo de TAGS aqui si es demasiado pesado!
+          </div>
+            <hr>
+            <h4>Tienes datos ya generados?</h4>
+            <form method="POST" action="#">
+                    <div class="row 50%">
+                        <div class="12u">
+                            <!--input type="text" name="url" id="" placeholder="Url de documento de TAGS" /-->
+                            {% csrf_token %}
+                            <input name="key_tags" placeholder="Ingresa tu KEY entregado!" maxlength="1000" required="" id="id_key_tags" type="text">
+                        </div>url
+                    </div>
+                    <div class="row">
+                        <div class="12u">
+                            <ul class="actions">
+                                <li><button type="submit" class="button style3 big">Enviar Clave</button></li>
+                            </ul>
+                        </div>
+                    </div>
+                </form>
+        </section>
+    </div>
+{% endblock intro%}
+
+{% block moreJS %}
+    <script  src="{% static 'js/animateIntro.js' %}"></script>
+    <script>
+    + function($) {
+    'use strict';
+
+    // UPLOAD CLASS DEFINITION
+    // ======================
+
+    var dropZone = document.getElementById('drop-zone');
+    var uploadForm = document.getElementById('js-upload-form');
+
+    var startUpload = function(files) {
+        console.log(files)
+    }
+
+    uploadForm.addEventListener('submit', function(e) {
+        var uploadFiles = document.getElementById('js-upload-files').files;
+        e.preventDefault()
+
+        startUpload(uploadFiles)
+    })
+
+    dropZone.ondrop = function(e) {
+        e.preventDefault();
+        this.className = 'upload-drop-zone';
+
+        startUpload(e.dataTransfer.files)
+    }
+
+    dropZone.ondragover = function() {
+        this.className = 'upload-drop-zone drop';
+        return false;
+    }
+
+    dropZone.ondragleave = function() {
+        this.className = 'upload-drop-zone';
+        return false;
+    }
+
+}(jQuery);
+    </script>
+{% endblock moreJS %}

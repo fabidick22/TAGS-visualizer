@@ -1,0 +1,17 @@
+<nav id="nav">
+    <ul>
+        <li class="current"><a href="{% url 'index' %}">Inicio</a></li>
+        <li>
+            <a href="#">Análisis</a>
+            <ul>
+
+                {% if keyUrl %}
+                    <li><a href="{% url 'analisisDatos' key2=keyUrl%}">Analisis de datos</a></li>
+
+                {% endif %}
+            </ul>
+        </li>
+        
+
+    </ul>
+</nav>

@@ -1,0 +1,328 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block moreCSS %}
+    <link rel="stylesheet" href="{% static 'css/animeteIntro.css' %}">
+    <style>
+
+			.legend {
+				font-family: 'Raleway', sans-serif;
+				fill: #333333;
+			}
+
+			.tooltip {
+				fill: #333333;
+			}
+		</style>
+    <style>
+#chartdiv {
+	width	: 100%;
+	height	: 500px;
+}
+</style>
+{% endblock %}
+{% block header %}
+<div id="header-wrapper2" class="wrapper" style="padding: 4em 0 9em 0;">
+    <div class="intro">
+        <br>
+        <br>
+        <br>
+        <h1><a href="indexOriginal.html">Análisis de datos</a></h1>
+            <p>Análisis de los datos tomados de TAGS.</p>
+    </div>
+</div>
+
+
+{% endblock header %}
+{% block main %}
+    <!-- Main -->
+    <div class="wrapper style2">
+        <div class="title"></div>
+        <div id="main" class="container">
+
+            <!-- Content
+                <div id="content">
+                    <article class="box post">
+                        <header class="style1">
+                            <h2>Análisis de Sentimientos</h2>
+                            <p>Texto descriptivo!</p>
+                        </header>
+                        <div class="row">
+                            <div class="8u 12u(mobile)">
+                                <div class="radarChart"></div>
+
+                            </div>
+                            <div class="4u 12u(mobile)">
+                                <form action="">
+                                    <label for="">
+                                        <input type="text" placeholder="nomebre">
+                                        <input type="range">
+                                        <button class="btn style1">Enviar</button>
+                                    </label>
+                                </form>
+                            </div>
+                        </div>
+
+                    </article>
+                </div>-->
+                <div id="content1">
+                    <article class="box post">
+                        <header class="style2">
+                            <h2>Concurrencia de Tweets por día</h2>
+                            <p>Aqui se describe los tweets por mes, día y hora</p>
+                        </header>
+                        <div class="row">
+                            <div class="12u 12u(mobile)">
+                                <div id="chartdiv"></div>
+                            </div>
+                        </div>
+
+                    </article>
+                </div>
+                <div id="content2">
+                    <article class="box post">
+                        <header class="style2">
+                            <h2>Top Users</h2>
+                            <p>Se muestra los primeros 20 Usuarios con más tweets</p>
+                        </header>
+                        <div class="row">
+                            <div class="12u 12u(mobile)">
+                                <svg id="wordsAcount" width="960" height="960" font-family="sans-serif" font-size="10" text-anchor="middle"></svg>
+                            </div>
+                        </div>
+
+                    </article>
+                </div>
+                <div id="content3">
+                    <article class="box post">
+                        <header class="style2">
+                            <h2>Palabras más usadas</h2>
+                            <p>Se muestra las 200 palabras más utilizadas</p>
+                        </header>
+                        <div class="row">
+                            <div class="12u 12u(mobile)">
+                                <div id='wordcloud'></div>
+                            </div>
+                        </div>
+
+                    </article>
+                </div>
+        </div>
+    </div>
+{% endblock main %}
+
+
+{% block moreJS %}
+    <script  src="{% static 'js/animateIntro.js' %}"></script>
+    <script src="{% static '/js/d3-wordcloud/lib/d3/d3.js' %}"></script>
+    <script src="{% static '/js/radar/radarChart.js' %}"></script>
+		<script>
+
+
+			/*var margin = {top: 100, right: 100, bottom: 100, left: 100},
+				width = Math.min(700, window.innerWidth - 10) - margin.left - margin.right,
+				height = Math.min(width, window.innerHeight - margin.top - margin.bottom - 20);
+            */
+			  var margin = {top: 100, right: 100, bottom: 100, left: 100},
+                width = Math.min(700, window.innerWidth),
+                height = Math.min(width, window.innerHeight-200);
+			var data = [
+					  [//iPhone
+						{axis:"Triste",value:0.22},
+						{axis:"Enojado",value:0.28},
+						{axis:"Feliz",value:0.29},
+						{axis:"Normal",value:0.17},
+					  ],[//Samsung
+						{axis:"Triste",value:0.27},
+						{axis:"Enojado",value:0.16},
+						{axis:"Feliz",value:0.35},
+						{axis:"Normal",value:0.38}
+					  ]
+					];
+			//////////////////////////////////////////////////////////////
+			//////////////////// Draw the Chart //////////////////////////
+			//////////////////////////////////////////////////////////////
+			var color = d3.scale.ordinal()
+				.range(["#EDC951","#CC333F","#00A0B0"]);
+
+			var radarChartOptions = {
+			  w: width,
+			  h: height,
+			  margin: margin,
+			  maxValue: 0.5,
+			  levels: 5,
+			  roundStrokes: true,
+			  color: color
+			};
+			//Call function to draw the Radar chart
+			RadarChart(".radarChart", data, radarChartOptions);
+		</script>
+    <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+<script src="https://www.amcharts.com/lib/3/serial.js"></script>
+<script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+<link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+<script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+<!-- Chart code -->
+<script>
+var chartData = generateChartData();
+
+var chart = AmCharts.makeChart("chartdiv", {
+    "type": "serial",
+    "theme": "light",
+    "marginRight": 80,
+    "dataProvider": {{ datatime.data | safe }},
+    "valueAxes": [{
+        "position": "left",
+        "title": "Numero de Twitts"
+    }],
+    "graphs": [{
+        "id": "g1",
+        "fillAlphas": 0.4,
+        "valueField": "entities_str",
+         "balloonText": "<div style='margin:5px; font-size:19px;'>Twitts:<b>[[value]]</b></div>"
+    }],
+    "chartScrollbar": {
+        "graph": "g1",
+        "scrollbarHeight": 80,
+        "backgroundAlpha": 0,
+        "selectedBackgroundAlpha": 0.1,
+        "selectedBackgroundColor": "#888888",
+        "graphFillAlpha": 0,
+        "graphLineAlpha": 0.5,
+        "selectedGraphFillAlpha": 0,
+        "selectedGraphLineAlpha": 1,
+        "autoGridCount": true,
+        "color": "#AAAAAA"
+    },
+    "chartCursor": {
+        "categoryBalloonDateFormat": "JJ:NN, DD MMMM",
+        "cursorPosition": "mouse"
+    },
+    "categoryField": "date",
+    "categoryAxis": {
+        "minPeriod": "mm",
+        "parseDates": true
+    },
+    "export": {
+        "enabled": true,
+         "dateFormat": "YYYY-MM-DD HH:NN:SS"
+    }
+});
+
+chart.addListener("dataUpdated", zoomChart);
+// when we apply theme, the dataUpdated event is fired even before we add listener, so
+// we need to call zoomChart here
+zoomChart();
+// this method is called when chart is first inited as we listen for "dataUpdated" event
+function zoomChart() {
+    // different zoom methods can be used - zoomToIndexes, zoomToDates, zoomToCategoryValues
+    chart.zoomToIndexes(chartData.length - 250, chartData.length - 100);
+}
+
+// generate some random data, quite different range
+function generateChartData() {
+    var chartData = [];
+    // current date
+    var firstDate = new Date();
+    // now set 500 minutes back
+    firstDate.setMinutes(firstDate.getDate() - 1000);
+
+    // and generate 500 data items
+    var visits = 500;
+    for (var i = 0; i < 500; i++) {
+        var newDate = new Date(firstDate);
+        // each time we add one minute
+        newDate.setMinutes(newDate.getMinutes() + i);
+        // some random number
+        visits += Math.round((Math.random()<0.5?1:-1)*Math.random()*10);
+        // add data item to the array
+        chartData.push({
+            date: newDate,
+            visits: visits
+        });
+    }
+    return chartData;
+}
+</script>
+
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+
+//var svg = d3.select("svg"),
+var svg = d3.select("#wordsAcount"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height");
+
+var format = d3.format(",d");
+
+var color = d3.scaleOrdinal(d3.schemeCategory20c);
+
+var pack = d3.pack()
+    .size([width, height])
+    .padding(1.5);
+
+d3.csv("{% static 'topUsers.csv' %}", function(d) {
+  d.value = +d.value;
+  if (d.value) return d;
+}, function(error, classes) {
+  if (error) throw error;
+
+  var root = d3.hierarchy({children: classes})
+      .sum(function(d) { return d.value; })
+      .each(function(d) {
+        if (id = d.data.id) {
+          var id, i = id.lastIndexOf(".");
+          d.id = id;
+          d.package = id.slice(0, i);
+          d.class = id.slice(i + 1);
+        }
+      });
+
+  var node = svg.selectAll(".node")
+    .data(pack(root).leaves())
+    .enter().append("g")
+      .attr("class", "node")
+      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+  node.append("circle")
+      .attr("id", function(d) { return d.id; })
+      .attr("r", function(d) { return d.r; })
+      .style("fill", function(d) { return color(d.package); });
+
+  node.append("clipPath")
+      .attr("id", function(d) { return "clip-" + d.id; })
+    .append("use")
+      .attr("xlink:href", function(d) { return "#" + d.id; });
+
+  node.append("text")
+      .attr("style", function(d) { return "font-size:"+d.r/5+"px"; })
+      .attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; })
+    .selectAll("tspan")
+    .data(function(d) { return d.class.split(/(?=[A-Z][^A-Z])/g); })
+    .enter().append("tspan")
+      .attr("x", 0)
+      .attr("y", function(d, i, nodes) { return 13 + (i - nodes.length / 2 - 0.5) * 20; })
+      .text(function(d) { return d; });
+
+  node.append("title")
+      .text(function(d) { return d.id + "\n" + format(d.value); });
+});
+
+</script>
+
+    <script src="{% static '/js/d3-wordcloud/lib/d3/d3.js' %}"></script>
+    <script  src="{% static 'js/d3-wordcloud/lib/d3/d3.layout.cloud.js' %}"></script>
+    <script  src="{% static 'js/d3-wordcloud/d3.wordcloud.js' %}"></script>
+    <script src="{% static 'js/d3-wordcloud/example/example.words.js' %}"></script>
+
+    <script>
+    var width = document.body.clientWidth;
+      d3.wordcloud()
+        .size([width-200, '600'])
+        .fill(d3.scale.ordinal().range(["#884400", "#448800", "#888800", "#444400"]))
+        .words({{ topWords.data | safe }})
+        .onwordclick(function(d, i) {
+          if (d.href) { window.location = d.href; }
+        })
+        .start();
+    </script>
+{% endblock moreJS %}

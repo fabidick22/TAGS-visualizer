@@ -1,0 +1,752 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load filter_dict %}
+
+
+{% block moreCSSImportant %}
+{% endblock moreCSSImportant %}
+{% block moreCSS %}
+<link rel="stylesheet" href="{% static 'css/animeteIntro.css' %}">
+<link rel="stylesheet" href="{% static 'css/counterStyle.css' %}">
+    <style>
+#chartdiv {
+  width: 100%;
+  height: 500px;
+}
+
+.map-marker {
+    /* adjusting for the marker dimensions
+    so that it is centered on coordinates */
+    margin-left: -8px;
+    margin-top: -8px;
+}
+.map-marker.map-clickable {
+    cursor: pointer;
+}
+.pulse {
+    width: 10px;
+    height: 10px;
+    border: 5px solid #f7f14c;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    border-radius: 30px;
+    background-color: #716f42;
+    z-index: 10;
+    position: absolute;
+  }
+.map-marker .dot {
+    border: 10px solid #fff601;
+    background: transparent;
+    -webkit-border-radius: 60px;
+    -moz-border-radius: 60px;
+    border-radius: 60px;
+    height: 50px;
+    width: 50px;
+    -webkit-animation: pulse 3s ease-out;
+    -moz-animation: pulse 3s ease-out;
+    animation: pulse 3s ease-out;
+    -webkit-animation-iteration-count: infinite;
+    -moz-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    z-index: 1;
+    opacity: 0;
+  }
+  @-moz-keyframes pulse {
+   0% {
+      -moz-transform: scale(0);
+      opacity: 0.0;
+   }
+   25% {
+      -moz-transform: scale(0);
+      opacity: 0.1;
+   }
+   50% {
+      -moz-transform: scale(0.1);
+      opacity: 0.3;
+   }
+   75% {
+      -moz-transform: scale(0.5);
+      opacity: 0.5;
+   }
+   100% {
+      -moz-transform: scale(1);
+      opacity: 0.0;
+   }
+  }
+  @-webkit-keyframes "pulse" {
+   0% {
+      -webkit-transform: scale(0);
+      opacity: 0.0;
+   }
+   25% {
+      -webkit-transform: scale(0);
+      opacity: 0.1;
+   }
+   50% {
+      -webkit-transform: scale(0.1);
+      opacity: 0.3;
+   }
+   75% {
+      -webkit-transform: scale(0.5);
+      opacity: 0.5;
+   }
+   100% {
+      -webkit-transform: scale(1);
+      opacity: 0.0;
+   }
+  }
+</style>
+
+    <!-- Natural Gallery assets -->
+    <link rel="stylesheet" href="{% static 'natural-gallery-js/dist/themes/natural.css' %}" >
+    <link rel="stylesheet" href="{% static 'natural-gallery-js/dist/natural-gallery.full.css' %}" >
+    <script src="{% static 'natural-gallery-js/dist/natural-gallery.full.js' %}"></script>
+{% endblock moreCSS %}
+{% block header %}
+<div id="header-wrapper2" class="wrapper" style="padding: 4em 0 9em 0;">
+    <div class="intro">
+        <br>
+        <br>
+        <br>
+        <h1>
+            <a href="indexOriginal.html">Información del Archivo</a>
+        </h1>
+        <p><strong>Hashtags usados: </strong>{{ infoBasic|get_value_key:'hashtags'}}</p>
+        <p><strong>Número de Tweets: </strong>{{ infoBasic|get_value_key:'numberTweets'}}</p>
+        <p><strong>Fecha Tweet inicial: </strong>{{ infoBasic|get_value_key:'firstTweet'}}</p>
+        <p><strong>Fecha Tweet final: </strong>{{ infoBasic|get_value_key:'lastTweet'}}</p>    </div>
+</div>
+{% endblock header %}
+{% block main %}
+    <!-- Main -->
+    <div class="wrapper style3">
+        <div class="titlediv">Datos Informativos</div>
+        <div id="main" class="container">
+
+            <!-- Content -->
+                <div id="content">
+                    <article class="box post">
+                        <header class="style1">
+                            <h2>Datos de Tags</h2>
+                            <p>Los datos informativos sobres el archivo obtenido de Google Drive</p>
+                            <p><strong>Total de países tweets: </strong> Solo tweets de países detectados ({{ country }})</p>
+                        </header>
+
+                        <div class="example-row">
+                            <div class="example" title="{{ infoBasic|get_value_key:'uniqueTweetsPor'}}">
+                                <h3>Tweets únicos</h3>
+                                <div class="js-radial counter radial"
+                                    data-finnish="{{ infoBasic|get_value_key:'uniqueTweetsPor'}}"
+                                    data-speed="26"
+                                    data-append="%"
+                                    data-color="#5EFB6E">
+                                    <div class="display">
+                                        <span class="count">0</span>
+                                        <span class="decorator">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example">
+                                <h3>Total países tweets</h3>
+                                <div class="js-radial counter radial"
+                                    data-finnish="{{ country|convert_por:194 }}"
+                                    data-speed="50"
+                                     data-append="%"
+                                    data-cclockwise="true"
+                                    data-color="#FEF64B">
+                                    <div class="display">
+                                        <span class="count">0</span>
+                                        <span class="decorator">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example">
+                                <h3>Total lenguajes tweets</h3>
+                                <div class="js-radial counter radial"
+                                    data-finnish="80"
+                                    data-speed="26"
+                                    data-append="%"
+                                    data-color="#FF9999"
+                                    data-endcolor="#FF4C4C">
+                                    <div class="display">
+                                        <span class="count">70</span>
+                                        <span class="decorator">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                        <div id="chartdiv"></div>
+                        <br>
+                        <br>
+                    </article>
+
+                </div>
+        </div>
+    </div>
+
+    <div class="wrapper style2">
+        <div class="titlediv">--- FOTOS ---</div>
+        <div id="main" class="container">
+
+            <!-- Content -->
+                <div id="content">
+                    <article class="box post">
+                        <header class="style1">
+                            <h2>Imágenes de Tweets</h2>
+                        </header>
+
+                        <div class="example-row">
+                                <h2 class="text-center">4 items por fila</h2>
+
+                                <svg version="1.1" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 100 100"  xml:space="preserve" style="display:none;">
+
+                                <g id="icon-search">
+                                    <path d="M67.647,61.054c1.74-1.741,3.046-3.706,3.916-5.896c0.87-2.19,1.305-4.422,1.305-6.696c0-2.274-0.435-4.52-1.305-6.738
+                                        c-0.87-2.218-2.176-4.197-3.916-5.938c-1.741-1.741-3.706-3.032-5.896-3.874c-2.19-0.842-4.436-1.263-6.738-1.263
+                                        c-2.302,0-4.549,0.421-6.738,1.263c-2.19,0.842-4.155,2.134-5.896,3.874s-3.046,3.72-3.916,5.938
+                                        c-0.87,2.218-1.305,4.464-1.305,6.738c0,2.274,0.435,4.506,1.305,6.696c0.87,2.19,2.176,4.155,3.916,5.896
+                                        c1.741,1.74,3.706,3.046,5.896,3.916c2.19,0.87,4.436,1.305,6.738,1.305s4.548-0.435,6.738-1.305
+                                        C63.941,64.1,65.906,62.794,67.647,61.054z M77.754,25.679c3.145,3.144,5.503,6.696,7.075,10.654
+                                        c1.572,3.959,2.358,7.987,2.358,12.086s-0.786,8.128-2.358,12.086c-1.572,3.959-3.93,7.51-7.075,10.654
+                                        c-2.526,2.527-5.334,4.548-8.422,6.064c-3.088,1.516-6.288,2.526-9.602,3.032c-3.313,0.506-6.64,0.478-9.98-0.084
+                                        c-3.341-0.562-6.528-1.628-9.56-3.201L25.703,91.459c-0.842,0.842-1.769,1.459-2.779,1.853c-1.011,0.393-2.064,0.59-3.158,0.59
+                                        s-2.148-0.197-3.158-0.59c-1.011-0.393-1.937-1.011-2.779-1.853c-0.842-0.842-1.46-1.769-1.853-2.779
+                                        c-0.393-1.011-0.59-2.064-0.59-3.158s0.197-2.147,0.59-3.158c0.393-1.011,1.011-1.937,1.853-2.779l13.981-13.981
+                                        c-1.965-3.088-3.341-6.401-4.127-9.939c-0.786-3.538-0.997-7.075-0.632-10.612c0.365-3.537,1.32-6.977,2.864-10.318
+                                        c1.544-3.341,3.664-6.359,6.359-9.054c3.144-3.088,6.696-5.418,10.654-6.991c3.959-1.572,7.987-2.358,12.086-2.358
+                                        c4.099,0,8.128,0.786,12.086,2.358C71.058,20.261,74.61,22.591,77.754,25.679z"/>
+                                </g>
+                                <g id="icon-next">
+                                    <polygon points="88.126,24.216 50.036,62.306 11.947,24.216 0.355,35.809 50.036,85.49 99.718,35.809 		"/>
+                                </g>
+                                <g id="icon-category">
+                                    <path d="M98.929,28.421L87.854,17.346c-1.311-1.311-3.436-1.311-4.747,0L36.974,63.48L17.353,43.859
+                                        c-1.31-1.311-3.436-1.311-4.746,0L1.532,54.933c-1.311,1.31-1.311,3.436,0,4.747l33.069,33.069
+                                        c0.655,0.656,1.514,0.983,2.373,0.983c0.859,0,1.718-0.328,2.373-0.983l59.581-59.582c0.63-0.629,0.983-1.483,0.983-2.373
+                                        C99.912,29.904,99.559,29.05,98.929,28.421z"/>
+                                </g>
+                                <g id="icon-pict">
+                                    <path d="M8.603,16.406v77.478H91.47V16.406H8.603z M82.018,26.091V72.5l-14.65-17.355L54.369,66.581L36.093,44.649L18.055,69.808
+                                        V26.091H82.018z"/>
+                                    <path d="M60.643,46.263c3.655,0,6.617-3.034,6.617-6.774c0-3.744-2.962-6.779-6.617-6.779c-3.654,0-6.617,3.035-6.617,6.779
+                                        C54.026,43.228,56.989,46.263,60.643,46.263z"/>
+                                </g>
+                                <g id="icon-noresults">
+                                    <path d="M99.912,6.908L6.821,100l-5.812-5.812L94.1,1.096L99.912,6.908z M68.442,8.462L5.237,71.349V8.462H68.442z M35.174,27.716
+                                        c0-6.075-4.925-10.999-10.999-10.999c-6.129,0-10.999,4.988-10.999,10.999c0,6.012,4.87,10.999,10.999,10.999
+                                        C30.25,38.716,35.174,33.791,35.174,27.716z M88.514,82.787c-3.364,0-25.162,0-28.576,0l-5.895-11.473l-6.014,5.984l2.738,5.489
+                                        c-0.846,0-2.921,0-8.254,0l-9.896,9.847h63.07V29.881L73.257,52.198C78.41,62.531,88.123,82.004,88.514,82.787z"/>
+                                </g>
+                            </svg>
+
+                                <!-- Photoswipe template -->
+                                <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="pswp__bg"></div>
+                                    <div class="pswp__scroll-wrap">
+                                        <div class="pswp__container">
+                                            <div class="pswp__item"></div>
+                                            <div class="pswp__item"></div>
+                                            <div class="pswp__item"></div>
+                                        </div>
+                                        <div class="pswp__ui pswp__ui--hidden">
+                                            <div class="pswp__top-bar">
+                                                <div class="pswp__counter"></div>
+                                                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                                                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                                                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                                                <div class="pswp__preloader">
+                                                    <div class="pswp__preloader__icn">
+                                                        <div class="pswp__preloader__cut">
+                                                            <div class="pswp__preloader__donut"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                                                <div class="pswp__share-tooltip"></div>
+                                            </div>
+                                            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+                                            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
+                                            <div class="pswp__caption">
+                                                <div class="pswp__caption__center"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Gallery Wrapper  -->
+                                <div id="gallery"></div>
+                        </div>
+                    </article>
+
+                </div>
+        </div>
+    </div>
+    <!--div class="example">
+	<h3>Grid</h3>
+	<div class="js-grid grid-counter counter grid-counter"
+		data-finnish="42"
+		data-speed="50"
+		data-append="%">
+		<div class="display">
+			<span class="count">0</span>
+			<span class="decorator">%</span>
+		</div>
+		<div class="grid blue"></div>
+	</div>
+</div>
+<div class="example">
+	<h3>Grid without count</h3>
+	<div class="js-grid grid-counter counter grid-counter"
+		data-finnish="64"
+		data-speed="50"
+		data-countanim="false">
+		<div class="display">
+			<span class="count">64</span>
+			<span class="decorator">%</span>
+		</div>
+		<div class="grid green"></div>
+	</div>
+</div-->
+<!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"-->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <!--div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Clave de Acceso</h4>
+      </div-->
+      <div class="modal-body">
+        <p>Copia y guarda esta clave, esta te permite volver a revisar todos tus datos obtenidos.</p>
+          <form>
+          <div class="input-group">
+            <input type="text" class="form-control"
+                value="{{ key }}" placeholder="Some path" id="copy-input">
+            <span class="input-group-btn">
+              <a class="btn btn-default" type="button" id="copy-button"
+                  data-toggle="tooltip" data-placement="button"
+                  title="Copy to Clipboard">
+                Copy
+              </a>
+            </span>
+          </div>
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock main %}
+{% block moreJS %}
+    <script src="{% static 'js/counters.js' %}"></script>
+    <script  src="{% static 'js/animateIntro.js' %}"></script>
+
+    <!-- Resources -->
+<script src="https://www.amcharts.com/lib/3/ammap.js"></script>
+<script src="https://www.amcharts.com/lib/3/maps/js/worldLow.js"></script>
+<script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+<link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+<script src="https://www.amcharts.com/lib/3/themes/none.js"></script>
+
+    <script type="text/javascript">
+            var galleryData = {
+                options: {
+                    format: 'square',
+                    imagesPerRow: 4,
+                    margin: 4,
+                    showCount: true,
+                    searchFilter: true,
+                    categoriesFilter: true,
+                    showNone: true,
+                    showOthers: true
+                }
+            };
+
+            var galleryEl = document.getElementById('gallery');
+            var photoswipeEl = document.getElementsByClassName('pswp')[0];
+            var gallery = new NaturalGallery.Gallery(galleryEl, photoswipeEl, galleryData);
+            var data={{ images | safe}};
+            gallery.images = JSON.parse(JSON.stringify(data));
+
+
+        </script>
+
+<!-- Chart code -->
+<script>
+/*
+  Although amMap has methods like getAreaCenterLatitude and getAreaCenterLongitude,
+  they are not suitable in quite a lot of cases as the center of some countries
+  is even outside the country itself (like US, because of Alaska and Hawaii)
+  That's why wehave the coordinates stored here
+*/
+
+var latlong = {};
+latlong["AD"] = {"latitude":42.5, "longitude":1.5};
+latlong["AE"] = {"latitude":24, "longitude":54};
+latlong["AF"] = {"latitude":33, "longitude":65};
+latlong["AG"] = {"latitude":17.05, "longitude":-61.8};
+latlong["AI"] = {"latitude":18.25, "longitude":-63.1667};
+latlong["AL"] = {"latitude":41, "longitude":20};
+latlong["AM"] = {"latitude":40, "longitude":45};
+latlong["AN"] = {"latitude":12.25, "longitude":-68.75};
+latlong["AO"] = {"latitude":-12.5, "longitude":18.5};
+latlong["AP"] = {"latitude":35, "longitude":105};
+latlong["AQ"] = {"latitude":-90, "longitude":0};
+latlong["AR"] = {"latitude":-34, "longitude":-64};
+latlong["AS"] = {"latitude":-14.3333, "longitude":-170};
+latlong["AT"] = {"latitude":47.3333, "longitude":13.3333};
+latlong["AU"] = {"latitude":-27, "longitude":133};
+latlong["AW"] = {"latitude":12.5, "longitude":-69.9667};
+latlong["AZ"] = {"latitude":40.5, "longitude":47.5};
+latlong["BA"] = {"latitude":44, "longitude":18};
+latlong["BB"] = {"latitude":13.1667, "longitude":-59.5333};
+latlong["BD"] = {"latitude":24, "longitude":90};
+latlong["BE"] = {"latitude":50.8333, "longitude":4};
+latlong["BF"] = {"latitude":13, "longitude":-2};
+latlong["BG"] = {"latitude":43, "longitude":25};
+latlong["BH"] = {"latitude":26, "longitude":50.55};
+latlong["BI"] = {"latitude":-3.5, "longitude":30};
+latlong["BJ"] = {"latitude":9.5, "longitude":2.25};
+latlong["BM"] = {"latitude":32.3333, "longitude":-64.75};
+latlong["BN"] = {"latitude":4.5, "longitude":114.6667};
+latlong["BO"] = {"latitude":-17, "longitude":-65};
+latlong["BR"] = {"latitude":-10, "longitude":-55};
+latlong["BS"] = {"latitude":24.25, "longitude":-76};
+latlong["BT"] = {"latitude":27.5, "longitude":90.5};
+latlong["BV"] = {"latitude":-54.4333, "longitude":3.4};
+latlong["BW"] = {"latitude":-22, "longitude":24};
+latlong["BY"] = {"latitude":53, "longitude":28};
+latlong["BZ"] = {"latitude":17.25, "longitude":-88.75};
+latlong["CA"] = {"latitude":54, "longitude":-100};
+latlong["CC"] = {"latitude":-12.5, "longitude":96.8333};
+latlong["CD"] = {"latitude":0, "longitude":25};
+latlong["CF"] = {"latitude":7, "longitude":21};
+latlong["CG"] = {"latitude":-1, "longitude":15};
+latlong["CH"] = {"latitude":47, "longitude":8};
+latlong["CI"] = {"latitude":8, "longitude":-5};
+latlong["CK"] = {"latitude":-21.2333, "longitude":-159.7667};
+latlong["CL"] = {"latitude":-30, "longitude":-71};
+latlong["CM"] = {"latitude":6, "longitude":12};
+latlong["CN"] = {"latitude":35, "longitude":105};
+latlong["CO"] = {"latitude":4, "longitude":-72};
+latlong["CR"] = {"latitude":10, "longitude":-84};
+latlong["CU"] = {"latitude":21.5, "longitude":-80};
+latlong["CV"] = {"latitude":16, "longitude":-24};
+latlong["CX"] = {"latitude":-10.5, "longitude":105.6667};
+latlong["CY"] = {"latitude":35, "longitude":33};
+latlong["CZ"] = {"latitude":49.75, "longitude":15.5};
+latlong["DE"] = {"latitude":51, "longitude":9};
+latlong["DJ"] = {"latitude":11.5, "longitude":43};
+latlong["DK"] = {"latitude":56, "longitude":10};
+latlong["DM"] = {"latitude":15.4167, "longitude":-61.3333};
+latlong["DO"] = {"latitude":19, "longitude":-70.6667};
+latlong["DZ"] = {"latitude":28, "longitude":3};
+latlong["EC"] = {"latitude":-2, "longitude":-77.5};
+latlong["EE"] = {"latitude":59, "longitude":26};
+latlong["EG"] = {"latitude":27, "longitude":30};
+latlong["EH"] = {"latitude":24.5, "longitude":-13};
+latlong["ER"] = {"latitude":15, "longitude":39};
+latlong["ES"] = {"latitude":40, "longitude":-4};
+latlong["ET"] = {"latitude":8, "longitude":38};
+latlong["EU"] = {"latitude":47, "longitude":8};
+latlong["FI"] = {"latitude":62, "longitude":26};
+latlong["FJ"] = {"latitude":-18, "longitude":175};
+latlong["FK"] = {"latitude":-51.75, "longitude":-59};
+latlong["FM"] = {"latitude":6.9167, "longitude":158.25};
+latlong["FO"] = {"latitude":62, "longitude":-7};
+latlong["FR"] = {"latitude":46, "longitude":2};
+latlong["GA"] = {"latitude":-1, "longitude":11.75};
+latlong["GB"] = {"latitude":54, "longitude":-2};
+latlong["GD"] = {"latitude":12.1167, "longitude":-61.6667};
+latlong["GE"] = {"latitude":42, "longitude":43.5};
+latlong["GF"] = {"latitude":4, "longitude":-53};
+latlong["GH"] = {"latitude":8, "longitude":-2};
+latlong["GI"] = {"latitude":36.1833, "longitude":-5.3667};
+latlong["GL"] = {"latitude":72, "longitude":-40};
+latlong["GM"] = {"latitude":13.4667, "longitude":-16.5667};
+latlong["GN"] = {"latitude":11, "longitude":-10};
+latlong["GP"] = {"latitude":16.25, "longitude":-61.5833};
+latlong["GQ"] = {"latitude":2, "longitude":10};
+latlong["GR"] = {"latitude":39, "longitude":22};
+latlong["GS"] = {"latitude":-54.5, "longitude":-37};
+latlong["GT"] = {"latitude":15.5, "longitude":-90.25};
+latlong["GU"] = {"latitude":13.4667, "longitude":144.7833};
+latlong["GW"] = {"latitude":12, "longitude":-15};
+latlong["GY"] = {"latitude":5, "longitude":-59};
+latlong["HK"] = {"latitude":22.25, "longitude":114.1667};
+latlong["HM"] = {"latitude":-53.1, "longitude":72.5167};
+latlong["HN"] = {"latitude":15, "longitude":-86.5};
+latlong["HR"] = {"latitude":45.1667, "longitude":15.5};
+latlong["HT"] = {"latitude":19, "longitude":-72.4167};
+latlong["HU"] = {"latitude":47, "longitude":20};
+latlong["ID"] = {"latitude":-5, "longitude":120};
+latlong["IE"] = {"latitude":53, "longitude":-8};
+latlong["IL"] = {"latitude":31.5, "longitude":34.75};
+latlong["IN"] = {"latitude":20, "longitude":77};
+latlong["IO"] = {"latitude":-6, "longitude":71.5};
+latlong["IQ"] = {"latitude":33, "longitude":44};
+latlong["IR"] = {"latitude":32, "longitude":53};
+latlong["IS"] = {"latitude":65, "longitude":-18};
+latlong["IT"] = {"latitude":42.8333, "longitude":12.8333};
+latlong["JM"] = {"latitude":18.25, "longitude":-77.5};
+latlong["JO"] = {"latitude":31, "longitude":36};
+latlong["JP"] = {"latitude":36, "longitude":138};
+latlong["KE"] = {"latitude":1, "longitude":38};
+latlong["KG"] = {"latitude":41, "longitude":75};
+latlong["KH"] = {"latitude":13, "longitude":105};
+latlong["KI"] = {"latitude":1.4167, "longitude":173};
+latlong["KM"] = {"latitude":-12.1667, "longitude":44.25};
+latlong["KN"] = {"latitude":17.3333, "longitude":-62.75};
+latlong["KP"] = {"latitude":40, "longitude":127};
+latlong["KR"] = {"latitude":37, "longitude":127.5};
+latlong["KW"] = {"latitude":29.3375, "longitude":47.6581};
+latlong["KY"] = {"latitude":19.5, "longitude":-80.5};
+latlong["KZ"] = {"latitude":48, "longitude":68};
+latlong["LA"] = {"latitude":18, "longitude":105};
+latlong["LB"] = {"latitude":33.8333, "longitude":35.8333};
+latlong["LC"] = {"latitude":13.8833, "longitude":-61.1333};
+latlong["LI"] = {"latitude":47.1667, "longitude":9.5333};
+latlong["LK"] = {"latitude":7, "longitude":81};
+latlong["LR"] = {"latitude":6.5, "longitude":-9.5};
+latlong["LS"] = {"latitude":-29.5, "longitude":28.5};
+latlong["LT"] = {"latitude":55, "longitude":24};
+latlong["LU"] = {"latitude":49.75, "longitude":6};
+latlong["LV"] = {"latitude":57, "longitude":25};
+latlong["LY"] = {"latitude":25, "longitude":17};
+latlong["MA"] = {"latitude":32, "longitude":-5};
+latlong["MC"] = {"latitude":43.7333, "longitude":7.4};
+latlong["MD"] = {"latitude":47, "longitude":29};
+latlong["ME"] = {"latitude":42.5, "longitude":19.4};
+latlong["MG"] = {"latitude":-20, "longitude":47};
+latlong["MH"] = {"latitude":9, "longitude":168};
+latlong["MK"] = {"latitude":41.8333, "longitude":22};
+latlong["ML"] = {"latitude":17, "longitude":-4};
+latlong["MM"] = {"latitude":22, "longitude":98};
+latlong["MN"] = {"latitude":46, "longitude":105};
+latlong["MO"] = {"latitude":22.1667, "longitude":113.55};
+latlong["MP"] = {"latitude":15.2, "longitude":145.75};
+latlong["MQ"] = {"latitude":14.6667, "longitude":-61};
+latlong["MR"] = {"latitude":20, "longitude":-12};
+latlong["MS"] = {"latitude":16.75, "longitude":-62.2};
+latlong["MT"] = {"latitude":35.8333, "longitude":14.5833};
+latlong["MU"] = {"latitude":-20.2833, "longitude":57.55};
+latlong["MV"] = {"latitude":3.25, "longitude":73};
+latlong["MW"] = {"latitude":-13.5, "longitude":34};
+latlong["MX"] = {"latitude":23, "longitude":-102};
+latlong["MY"] = {"latitude":2.5, "longitude":112.5};
+latlong["MZ"] = {"latitude":-18.25, "longitude":35};
+latlong["NA"] = {"latitude":-22, "longitude":17};
+latlong["NC"] = {"latitude":-21.5, "longitude":165.5};
+latlong["NE"] = {"latitude":16, "longitude":8};
+latlong["NF"] = {"latitude":-29.0333, "longitude":167.95};
+latlong["NG"] = {"latitude":10, "longitude":8};
+latlong["NI"] = {"latitude":13, "longitude":-85};
+latlong["NL"] = {"latitude":52.5, "longitude":5.75};
+latlong["NO"] = {"latitude":62, "longitude":10};
+latlong["NP"] = {"latitude":28, "longitude":84};
+latlong["NR"] = {"latitude":-0.5333, "longitude":166.9167};
+latlong["NU"] = {"latitude":-19.0333, "longitude":-169.8667};
+latlong["NZ"] = {"latitude":-41, "longitude":174};
+latlong["OM"] = {"latitude":21, "longitude":57};
+latlong["PA"] = {"latitude":9, "longitude":-80};
+latlong["PE"] = {"latitude":-10, "longitude":-76};
+latlong["PF"] = {"latitude":-15, "longitude":-140};
+latlong["PG"] = {"latitude":-6, "longitude":147};
+latlong["PH"] = {"latitude":13, "longitude":122};
+latlong["PK"] = {"latitude":30, "longitude":70};
+latlong["PL"] = {"latitude":52, "longitude":20};
+latlong["PM"] = {"latitude":46.8333, "longitude":-56.3333};
+latlong["PR"] = {"latitude":18.25, "longitude":-66.5};
+latlong["PS"] = {"latitude":32, "longitude":35.25};
+latlong["PT"] = {"latitude":39.5, "longitude":-8};
+latlong["PW"] = {"latitude":7.5, "longitude":134.5};
+latlong["PY"] = {"latitude":-23, "longitude":-58};
+latlong["QA"] = {"latitude":25.5, "longitude":51.25};
+latlong["RE"] = {"latitude":-21.1, "longitude":55.6};
+latlong["RO"] = {"latitude":46, "longitude":25};
+latlong["RS"] = {"latitude":44, "longitude":21};
+latlong["RU"] = {"latitude":60, "longitude":100};
+latlong["RW"] = {"latitude":-2, "longitude":30};
+latlong["SA"] = {"latitude":25, "longitude":45};
+latlong["SB"] = {"latitude":-8, "longitude":159};
+latlong["SC"] = {"latitude":-4.5833, "longitude":55.6667};
+latlong["SD"] = {"latitude":15, "longitude":30};
+latlong["SE"] = {"latitude":62, "longitude":15};
+latlong["SG"] = {"latitude":1.3667, "longitude":103.8};
+latlong["SH"] = {"latitude":-15.9333, "longitude":-5.7};
+latlong["SI"] = {"latitude":46, "longitude":15};
+latlong["SJ"] = {"latitude":78, "longitude":20};
+latlong["SK"] = {"latitude":48.6667, "longitude":19.5};
+latlong["SL"] = {"latitude":8.5, "longitude":-11.5};
+latlong["SM"] = {"latitude":43.7667, "longitude":12.4167};
+latlong["SN"] = {"latitude":14, "longitude":-14};
+latlong["SO"] = {"latitude":10, "longitude":49};
+latlong["SR"] = {"latitude":4, "longitude":-56};
+latlong["ST"] = {"latitude":1, "longitude":7};
+latlong["SV"] = {"latitude":13.8333, "longitude":-88.9167};
+latlong["SY"] = {"latitude":35, "longitude":38};
+latlong["SZ"] = {"latitude":-26.5, "longitude":31.5};
+latlong["TC"] = {"latitude":21.75, "longitude":-71.5833};
+latlong["TD"] = {"latitude":15, "longitude":19};
+latlong["TF"] = {"latitude":-43, "longitude":67};
+latlong["TG"] = {"latitude":8, "longitude":1.1667};
+latlong["TH"] = {"latitude":15, "longitude":100};
+latlong["TJ"] = {"latitude":39, "longitude":71};
+latlong["TK"] = {"latitude":-9, "longitude":-172};
+latlong["TM"] = {"latitude":40, "longitude":60};
+latlong["TN"] = {"latitude":34, "longitude":9};
+latlong["TO"] = {"latitude":-20, "longitude":-175};
+latlong["TR"] = {"latitude":39, "longitude":35};
+latlong["TT"] = {"latitude":11, "longitude":-61};
+latlong["TV"] = {"latitude":-8, "longitude":178};
+latlong["TW"] = {"latitude":23.5, "longitude":121};
+latlong["TZ"] = {"latitude":-6, "longitude":35};
+latlong["UA"] = {"latitude":49, "longitude":32};
+latlong["UG"] = {"latitude":1, "longitude":32};
+latlong["UM"] = {"latitude":19.2833, "longitude":166.6};
+latlong["US"] = {"latitude":38, "longitude":-97};
+latlong["UY"] = {"latitude":-33, "longitude":-56};
+latlong["UZ"] = {"latitude":41, "longitude":64};
+latlong["VA"] = {"latitude":41.9, "longitude":12.45};
+latlong["VC"] = {"latitude":13.25, "longitude":-61.2};
+latlong["VE"] = {"latitude":8, "longitude":-66};
+latlong["VG"] = {"latitude":18.5, "longitude":-64.5};
+latlong["VI"] = {"latitude":18.3333, "longitude":-64.8333};
+latlong["VN"] = {"latitude":16, "longitude":106};
+latlong["VU"] = {"latitude":-16, "longitude":167};
+latlong["WF"] = {"latitude":-13.3, "longitude":-176.2};
+latlong["WS"] = {"latitude":-13.5833, "longitude":-172.3333};
+latlong["YE"] = {"latitude":15, "longitude":48};
+latlong["YT"] = {"latitude":-12.8333, "longitude":45.1667};
+latlong["ZA"] = {"latitude":-29, "longitude":24};
+latlong["ZM"] = {"latitude":-15, "longitude":30};
+latlong["ZW"] = {"latitude":-20, "longitude":30};
+
+var mapData = {{ countryCounter | safe }};
+
+
+// get min and max values
+var minBulletSize = 3;
+var maxBulletSize = 70;
+var min = Infinity;
+var max = -Infinity;
+for ( var i = 0; i < mapData.length; i++ ) {
+  var value = mapData[ i ].value;
+  if ( value < min ) {
+    min = value;
+  }
+  if ( value > max ) {
+    max = value;
+  }
+}
+
+// it's better to use circle square to show difference between values, not a radius
+var maxSquare = maxBulletSize * maxBulletSize * 2 * Math.PI;
+var minSquare = minBulletSize * minBulletSize * 2 * Math.PI;
+
+// create circle for each country
+var images = [];
+for ( var i = 0; i < mapData.length; i++ ) {
+  var dataItem = mapData[ i ];
+  var value = dataItem.value;
+  // calculate size of a bubble
+  var square = ( value - min ) / ( max - min ) * ( maxSquare - minSquare ) + minSquare;
+  if ( square < minSquare ) {
+    square = minSquare;
+  }
+  var size = Math.sqrt( square / ( Math.PI * 2 ) );
+  var id = dataItem.code;
+    if(latlong[ id ]==undefined){
+    }else{
+  images.push( {
+    "type": "circle",
+"theme": "light",
+
+    "width": size,
+    "height": size,
+    "color": dataItem.color,
+    "longitude": latlong[ id ].longitude,
+    "latitude": latlong[ id ].latitude,
+    "title": dataItem.name,
+    "value": value
+  } );
+  }
+}
+
+// build map
+var map = AmCharts.makeChart( "chartdiv", {
+  "type": "map",
+  "projection": "miller",
+  "titles": [ {
+    "text": "Twitts por Paises",
+    "size": 14
+  }, {
+    "text": "Paises detectados por cada twitte",
+    "size": 11
+  } ],
+  "areasSettings": {
+    //"unlistedAreasColor": "#000000",
+    //"unlistedAreasAlpha": 0.1
+  },
+  "dataProvider": {
+    "map": "worldLow",
+    "images": images
+  },
+  "export": {
+    "enabled": true
+  }
+} );
+</script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+     $(window).load(function(){
+   $('#myModal').modal('show');
+    });
+</script>
+    <script>
+    $(document).ready(function() {
+  // Initialize the tooltip.
+  $('#copy-button').tooltip();
+
+  // When the copy button is clicked, select the value of the text box, attempt
+  // to execute the copy command, and trigger event to update tooltip message
+  // to indicate whether the text was successfully copied.
+  $('#copy-button').bind('click', function() {
+    var input = document.querySelector('#copy-input');
+    input.setSelectionRange(0, input.value.length + 1);
+    try {
+      var success = document.execCommand('copy');
+      if (success) {
+        $('#copy-button').trigger('copied', ['Copied!']);
+      } else {
+        $('#copy-button').trigger('copied', ['Copy with Ctrl-c']);
+      }
+    } catch (err) {
+      $('#copy-button').trigger('copied', ['Copy with Ctrl-c']);
+    }
+  });
+
+  // Handler for updating the tooltip message.
+  $('#copy-button').bind('copied', function(event, message) {
+    $(this).attr('title', message)
+        .tooltip('fixTitle')
+        .tooltip('show')
+        .attr('title', "Copy to Clipboard")
+        .tooltip('fixTitle');
+  });
+});
+
+    </script>
+{% endblock moreJS %}
